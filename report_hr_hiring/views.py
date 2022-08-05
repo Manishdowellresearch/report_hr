@@ -19,12 +19,16 @@ def generate_report(request):
         candidate_name =request.POST['candidate_name']
         response = targeted_population('hr_hiring','tasks',  ['task_details'], 'life_time')
         all_tasks = [data['task_details'] for data in response['normal']['data'][0]]
-        def find_candidate_task(candidate, task_list):
+        def find_candidate_tasks(candidate, task_list):
+            tasks = []
             for task in task_list:
                 if task['user'] == candidate:
-                    return task
+                    tasks.append(task)
+            if len(tasks) != 0:
+                return tasks
+
             return {"message": f"No task for {candidate} found"}
-        candidate_task = find_candidate_task(candidate_name, all_tasks)
+        candidate_task = find_candidate_tasks(candidate_name, all_tasks)
         return render(request, 'report.html',context={"candidate_task":candidate_task})
     else:
         return HttpResponse("ok")
