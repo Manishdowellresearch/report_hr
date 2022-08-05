@@ -1,5 +1,5 @@
-from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render
+from django.http import HttpResponse, JsonResponse 
+from django.shortcuts import render,redirect
 from django.views.decorators.csrf import csrf_exempt
 
 from .dowellpopulationfunction import targeted_population
@@ -31,7 +31,7 @@ def generate_report(request):
         candidate_task = find_candidate_tasks(candidate_name, all_tasks)
         return render(request, 'report.html',context={"candidate_task":candidate_task})
     else:
-        return HttpResponse("ok")
+        return redirect('home')
         #response = targeted_population('hr_hiring','tasks',  ['task_details'], 'life_time')
 
 
