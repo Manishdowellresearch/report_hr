@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Page Title</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+</head>
+<body>
+    <br>
+    
+    <div class="container w-50">
+        <form action="generate_report/" method="post">
+        <select name="candidate_name" class="filter-selectbox">
+            {% for candidate in candidate %}
+                <option value="{{ candidate }}">{{ candidate }}</option>
+            {% endfor %}
+        </select>
+        <input type="submit"  class="btn btn-outline-dark">
+        </form>
+    </div>
+</body>
+</html>
