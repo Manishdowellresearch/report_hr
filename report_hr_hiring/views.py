@@ -27,7 +27,7 @@ def generate_report(request):
             if len(tasks) != 0:
                 return tasks
 
-            return {"message": f"No task for {candidate} found"}
+            return {f"No task for {candidate} found": f"No task for {candidate} found"}
         candidate_task = find_candidate_tasks(candidate_name, all_tasks)
         return render(request, 'report.html',context={"candidate_task":candidate_task})
     else:
