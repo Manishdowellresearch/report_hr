@@ -65,6 +65,7 @@
                                                 <th>Title</th>
                                                 <th>Description</th>
                                                 <th>Status</th>
+                                                <th>Date</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -73,6 +74,7 @@
                                                 <td>{{candidate_task.user}}</td>
                                                 <td>{{candidate_task.title}}</td>
                                                 <td> {{candidate_task.description}}</td>
+                                                <td>{{candidate_task.created}}</td>
                                                 <td>{{candidate_task.status}}</td>
                                             </tr>
                                             {% endfor %}
