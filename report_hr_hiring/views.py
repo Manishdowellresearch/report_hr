@@ -37,7 +37,8 @@ def generate_report(request):
 
 @csrf_exempt
 def report(request):
-    response = targeted_population('hr_hiring','candidate_view',  ['candidate_data'], 'life_time')
+    response = targeted_population('hr_hiring','candidate_view',  ['candidate_data'], 'last_1_day')
+    print(response)
     candidate=[]
     for i in response['normal']['data'][0]:
         candidate.append(i['candidate_data']['applicant'])
@@ -60,3 +61,5 @@ def task_report(request):
             return {f"No task for {candidate} found": f"No task for {candidate} found"}
         candidate_task = find_candidate_tasks(candidate_name, all_tasks)
         return JsonResponse({"candidate_task":candidate_task})
+
+   
