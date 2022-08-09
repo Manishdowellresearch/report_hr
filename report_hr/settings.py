@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'report_hr_hiring',
     'corsheaders',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
