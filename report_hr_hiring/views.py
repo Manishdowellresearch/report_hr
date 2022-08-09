@@ -16,7 +16,8 @@ def home(request):
 @csrf_exempt
 def generate_report(request):
     if request.method == 'POST':
-        candidate_name =request.data['candidate_name']
+        candidate_name =request.POST['candidate_name']
+        print(candidate_name)
         response = targeted_population('hr_hiring','tasks',  ['task_details'], 'life_time')
         all_tasks = [data['task_details'] for data in response['normal']['data'][0]]
         def find_candidate_tasks(candidate, task_list):
