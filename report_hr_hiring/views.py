@@ -38,7 +38,7 @@ def generate_report(request):
 
 @csrf_exempt
 def report(request):
-    response = targeted_population('hr_hiring','candidate_view',  ['candidate_data'], 'last_1_day')
+    response = targeted_population('hr_hiring','candidate_view',  ['candidate_data'], 'life_time')
     print(response)
     candidate=[]
     for i in response['normal']['data'][0]:
