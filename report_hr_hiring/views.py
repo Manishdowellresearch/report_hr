@@ -44,12 +44,18 @@ def report(request):
     for i in response['normal']['data'][0]:
         candidate.append(i['candidate_data']['applicant'])
     return JsonResponse({"candidate":candidate})
-    
+
+@csrf_exempt
+def timeperiod(request):
+    timeperiod= ['custom' , 'last_1_day' , 'last_30_days' , 'last_90_days' , 'last_180_days' , 'last_1_year' , 'life_time']
+    return JsonResponse({"time":timeperiod})
+
 @csrf_exempt
 def task_report(request):
     if request.method == 'POST':
         candidate_name =request.POST['candidate_name']
-        response = targeted_population('hr_hiring','tasks',  ['task_details'], 'life_time')
+        time_period = request.POST['time_period']
+        response = targeted_population('hr_hiring','tasks',  ['task_details'], time_period)
         all_tasks = [data['task_details'] for data in response['normal']['data'][0]]
         def find_candidate_tasks(candidate, task_list):
             tasks = []
