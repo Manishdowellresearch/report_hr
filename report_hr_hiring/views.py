@@ -65,7 +65,7 @@ def task_report(request):
             if len(tasks) != 0:
                 return tasks
 
-            return {f"No task for {candidate} found": f"No task for {candidate} found"}
+            return tasks
         candidate_task = find_candidate_tasks(candidate_name, all_tasks)
         return JsonResponse({"candidate_task":candidate_task})
 
