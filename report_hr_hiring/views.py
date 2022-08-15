@@ -10,6 +10,7 @@ def home(request):
     candidate=[]
     for i in response['normal']['data'][0]:
         candidate.append(i['candidate_data']['applicant'])
+    print(candidate)
     return render(request,'home.html',context={"candidate":candidate})
 
 
@@ -19,16 +20,19 @@ def generate_report(request):
         candidate_name =request.POST['candidate_name']
         print(candidate_name)
         response = targeted_population('hr_hiring','tasks',  ['task_details'], 'life_time')
+
         all_tasks = [data['task_details'] for data in response['normal']['data'][0]]
         def find_candidate_tasks(candidate, task_list):
             tasks = []
             for task in task_list:
                 if task['user'] == candidate:
                     tasks.append(task)
-            if len(tasks) != 0:
-                return tasks
 
+            if len(tasks) != 0:
+            
+                return tasks
             return {f"No task for {candidate} found": f"No task for {candidate} found"}
+    
         candidate_task = find_candidate_tasks(candidate_name, all_tasks)
         return render(request, 'report.html',context={"candidate_task":candidate_task})
     else:
@@ -43,6 +47,7 @@ def report(request):
     candidate=[]
     for i in response['normal']['data'][0]:
         candidate.append(i['candidate_data']['applicant'])
+
     return JsonResponse({"candidate":candidate})
 
 @csrf_exempt
@@ -70,3 +75,39 @@ def task_report(request):
         return JsonResponse({"candidate_task":candidate_task})
 
    
+
+
+@csrf_exempt
+def hr_report(request):
+    timeperiod= ['custom' , 'last_1_day' , 'last_30_days' , 'last_90_days' , 'last_180_days' , 'last_1_year' , 'life_time']
+
+    if request.method == 'POST':
+        Time_period = request.POST['Timeperiod']
+        response = targeted_population('hr_hiring','hr_view',  ['application_details'], Time_period)
+        Task_detail = [data['application_details'] for data in response['normal']['data'][0]]
+        def find_tasks_status(task_detail):
+            shortlisted = []
+            selected  = []
+            teamlead_hire = []
+            hired = []
+            for task in task_detail:
+                if task['status'] == "shortlisted":
+                     shortlisted.append(task)
+                elif task['status'] == "selected":
+                     selected.append(task)
+                elif task['status'] == "teamlead_hire":
+                          teamlead_hire.append(task)
+                else:
+                          hired.append(task)
+            total_shorlisted_candidate = len(shortlisted)
+            total_selected_candidate = len(selected)
+            total_teamlead_hire_candidate = len(teamlead_hire)
+            total_hired_candidate = len( hired)
+            data =[total_shorlisted_candidate ,  total_selected_candidate  ,  total_teamlead_hire_candidate ,   total_hired_candidate]
+            print(data)
+            return data
+        Task_status = find_tasks_status(Task_detail)
+        print(Task_status)
+        return render(request, 'hr_report.html',context={"timeperiod":timeperiod ,"data":Task_status })
+    else:
+           return render(request, 'hr_report.html',context={"timeperiod":timeperiod})
