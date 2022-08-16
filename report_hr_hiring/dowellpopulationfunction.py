@@ -62,6 +62,7 @@ def targeted_population(database, collection, fields, period):
     response = requests.post(url, json=request_data,headers=headers)
 
     res= json.loads(response.text)
+  
     return res
 
 

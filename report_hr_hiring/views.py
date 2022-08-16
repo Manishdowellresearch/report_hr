@@ -3,6 +3,7 @@ from django.shortcuts import render,redirect
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
 from .dowellpopulationfunction import targeted_population
+import json
 # Create your views here.
 @csrf_exempt
 def home(request):
@@ -82,9 +83,14 @@ def hr_report(request):
     timeperiod= ['custom' , 'last_1_day' , 'last_30_days' , 'last_90_days' , 'last_180_days' , 'last_1_year' , 'life_time']
 
     if request.method == 'POST':
-        Time_period = request.POST['Timeperiod']
+        print('a')
+        Time_period = request.POST.get('Timeperiod')
+        print(Time_period)
         response = targeted_population('hr_hiring','hr_view',  ['application_details'], Time_period)
-        Task_detail = [data['application_details'] for data in response['normal']['data'][0]]
+        if response['normal']['is_error'] == True :
+              return render(request, 'hr_report.html',context={"timeperiod":timeperiod})
+        else:
+         Task_detail = [data['application_details'] for data in response['normal']['data'][0]]
         def find_tasks_status(task_detail):
             shortlisted = []
             selected  = []
@@ -95,19 +101,21 @@ def hr_report(request):
                      shortlisted.append(task)
                 elif task['status'] == "selected":
                      selected.append(task)
-                elif task['status'] == "teamlead_hire":
-                          teamlead_hire.append(task)
-                else:
-                          hired.append(task)
+                # elif task['status'] == "teamlead_hire":
+                #           teamlead_hire.append(task)
+                # else:
+                #           hired.append(task)
+         
             total_shorlisted_candidate = len(shortlisted)
             total_selected_candidate = len(selected)
             total_teamlead_hire_candidate = len(teamlead_hire)
             total_hired_candidate = len( hired)
-            data =[total_shorlisted_candidate ,  total_selected_candidate  ,  total_teamlead_hire_candidate ,   total_hired_candidate]
+            data =[total_shorlisted_candidate ,  total_selected_candidate]
             print(data)
             return data
         Task_status = find_tasks_status(Task_detail)
-        print(Task_status)
-        return render(request, 'hr_report.html',context={"timeperiod":timeperiod ,"data":Task_status })
+        context={"timeperiod":timeperiod ,"data":Task_status }
+        return HttpResponse(json.dumps(Task_status ), content_type="application/json")
+        # return render(request, 'hr_report.html',context={"timeperiod":timeperiod ,"data":Task_status })
     else:
            return render(request, 'hr_report.html',context={"timeperiod":timeperiod})

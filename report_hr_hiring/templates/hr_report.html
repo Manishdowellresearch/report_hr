@@ -91,17 +91,15 @@
                             <div class="row register-form">
                                 <div class="col-md-12">
                             <h3 class="register-heading">Choose the Time period</h3>
-
+                                 
                                     <form action="" method="post">
-                                        {% csrf_token %}
-                                        <select name="Timeperiod" class="filter-selectbox">
+                                     
+                                        <select  class="filter-selectbox"  id="timeperiod">
                                             {% for Timeperiod in timeperiod %}
                                                 <option value="{{ Timeperiod}}">{{Timeperiod}}</option>
                                             {% endfor %}
                                         </select>
-                                        <div class="form-group">
-                                            <input type="submit" name="LGform1" class="btnContactSubmit" value="Submit" />
-                                        </div>
+                                       
                                         </div>
                                         
                                     </form>
@@ -116,22 +114,26 @@
             <canvas id="myChart" style="width:100%;max-width:600px"></canvas>
         </div>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
         <script>
-            var xValues = ["shortlisted", "selected", "teamlead_hire", "hired"];
+       
+          function chartjs(value)
+          {
+         var xValues = ["shortlisted", "selected"];
             var barColors = [
               "#b91d47",
               "#00aba9",
-              "#2b5797",
-              "#e8c3b9",
+            
             ];
             
             new Chart("myChart", {
+              
               type: "pie",
               data: {
                 labels: xValues,
                 datasets: [{
                   backgroundColor: barColors,
-                  data: {{data|safe}}
+                  data: value
                 }]
               },
               options: {
@@ -140,6 +142,38 @@
                   text: "Candidate status"
                 }
               }
+            });
+        } 
+        </script>
+
+            <script type="text/javascript">
+
+            $(function () {
+                $("#timeperiod").change(function (e) {
+                    e.preventDefault();
+                    var selectedText = $(this).find("option:selected").text();
+                    var selectedValue = $(this).val();
+                    var token = $('input[name=csrfmiddlewaretoken]').val();
+                    $.ajax({
+                        type : 'POST',
+                        url : "/hr_report/",
+                        data:{
+                            'Timeperiod' : selectedValue,
+                            
+                            csrfmiddlewaretoken : token
+                        },
+                       
+                        success: function(response)
+                        {         
+                                  console.log(response)
+                                  chartjs(response)
+                               
+                        }
+                                
+                        
+                
+                        });
+                });
             });
             </script>
     </body>
