@@ -78,6 +78,22 @@
     border-top-right-radius: .25rem;
     color: white;
 }
+* {
+    box-sizing: border-box;
+  }
+  
+  .column {
+    float: left;
+    width: 33.33%;
+    padding: 5px;
+  }
+  
+  /* Clearfix (clear floats) */
+  .row::after {
+    content: "";
+    clear: both;
+    display: table;
+  }
         </style>
     </head>
     <body>
@@ -95,9 +111,8 @@
                                     <form action="" method="post">
                                      
                                         <select  class="filter-selectbox"  id="timeperiod">
-                                            {% for Timeperiod in timeperiod %}
-                                                <option value="{{ Timeperiod}}">{{Timeperiod}}</option>
-                                            {% endfor %}
+                                        
+                                         
                                         </select>
                                        
                                         </div>
@@ -111,22 +126,58 @@
                     </div>
                 </div>
             </div>
-            <canvas id="myChart" style="width:100%;max-width:600px"></canvas>
+            <div class="row">
+                <div class="column">
+            <canvas id="myChart1" style="width:10%;max-width:600px"></canvas>
+                </div>
+                <div class="column">
+            <canvas id="myChart2" style="width:10%;max-width:600px"></canvas>
+                </div>
+                <div class="column">
+            <canvas id="myChart3" style="width:10%;max-width:600px"></canvas>
+                </div>
+                <div class="column">
+            <canvas id="myChart4" style="width:10%;max-width:600px"></canvas>
+            </div>
+            <div class="column">
+            <canvas id="myChart5" style="width:10%;max-width:600px"></canvas>
+            </div>
         </div>
+    </div>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+
+
+      <script>
+        $.ajax({
+          url: '/timeperiod/',
+          dataType: 'json',
+
+          success: function(data) {
+            a = data.time
+            let html_data = '<option value="">----select----</option>';
+            a.forEach(function (data) {
+                html_data += `<option value="${data}">${data}</option>`
+            });
+            $("#timeperiod").html(html_data); 
+          },
+         
+      });
+
+
+      </script>
         <script>
        
-          function chartjs(value)
+          function chartshortlisted(value)
           {
-         var xValues = ["shortlisted", "selected"];
+         var xValues = ["shortlisted"];
             var barColors = [
               "#b91d47",
-              "#00aba9",
+             
             
             ];
             
-            new Chart("myChart", {
+            new Chart("myChart1", {
               
               type: "pie",
               data: {
@@ -144,9 +195,132 @@
               }
             });
         } 
+
+
+
+        function chartselected(value)
+        {
+       var xValues = ["Selected"];
+          var barColors = [
+          "#00aba9",
+           
+          
+          ];
+          
+          new Chart("myChart2", {
+            
+            type: "pie",
+            data: {
+              labels: xValues,
+              datasets: [{
+                backgroundColor: barColors,
+                data: value
+              }]
+            },
+            options: {
+              title: {
+                display: true,
+                text: "Candidate status"
+              }
+            }
+          });
+      } 
+
+
+      function chartteamlead_hire(value)
+      {
+     var xValues = ["teamlead_hire"];
+        var barColors = [
+          "#2b5797",
+         
+        
+        ];
+        
+        new Chart("myChart3", {
+          
+          type: "pie",
+          data: {
+            labels: xValues,
+            datasets: [{
+              backgroundColor: barColors,
+              data: value
+            }]
+          },
+          options: {
+            title: {
+              display: true,
+              text: "Candidate status"
+            }
+          }
+        });
+    } 
+
+
+    function chartHired(value)
+    {
+   var xValues = ["Hired"];
+      var barColors = [
+      "#e8c3b9",
+       
+      
+      ];
+      
+      new Chart("myChart4", {
+        
+        type: "pie",
+        data: {
+          labels: xValues,
+          datasets: [{
+            backgroundColor: barColors,
+            data: value
+          }]
+        },
+        options: {
+          title: {
+            display: true,
+            text: "Candidate status"
+          }
+        }
+      });
+  } 
+
+
+  function chartjs(value)
+  {
+ var xValues = ["shortlisted" ,"Selected" ,"Teamlead_hire" ,"Hired" ];
+    var barColors = [
+    "#b91d47",
+    "#00aba9",
+    "#2b5797",
+    "#e8c3b9",
+     
+    
+    ];
+    
+    new Chart("myChart5", {
+      
+      type: "pie",
+      data: {
+        labels: xValues,
+        datasets: [{
+          backgroundColor: barColors,
+          data: value
+        }]
+      },
+      options: {
+        title: {
+          display: true,
+          text: "Candidate status"
+        }
+      }
+    });
+} 
+
+
+
         </script>
 
-            <script type="text/javascript">
+        <script>
 
             $(function () {
                 $("#timeperiod").change(function (e) {
@@ -164,9 +338,20 @@
                         },
                        
                         success: function(response)
-                        {         
-                                  console.log(response)
-                                  chartjs(response)
+                        {  
+                          
+                          
+                          console.log(response)
+                      
+                               shortlisted = [response.Task_status[0]]
+                                  selected = [response.Task_status[1]]
+                                  Teamlead_hire= [response.Task_status[2]]
+                                  Hired = [response.Task_status[3]]
+                                  chartjs(response.Task_status)
+                                  chartshortlisted(shortlisted)
+                                  chartselected(selected)
+                                chartteamlead_hire(Teamlead_hire)
+                                chartHired(Hired)
                                
                         }
                                 
@@ -175,6 +360,7 @@
                         });
                 });
             });
-            </script>
-    </body>
+        
+          </script>
+</body>
 </html>

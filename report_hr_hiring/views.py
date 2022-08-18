@@ -83,7 +83,6 @@ def hr_report(request):
     timeperiod= ['custom' , 'last_1_day' , 'last_30_days' , 'last_90_days' , 'last_180_days' , 'last_1_year' , 'life_time']
 
     if request.method == 'POST':
-        print('a')
         Time_period = request.POST.get('Timeperiod')
         print(Time_period)
         response = targeted_population('hr_hiring','hr_view',  ['application_details'], Time_period)
@@ -101,21 +100,26 @@ def hr_report(request):
                      shortlisted.append(task)
                 elif task['status'] == "selected":
                      selected.append(task)
-                # elif task['status'] == "teamlead_hire":
-                #           teamlead_hire.append(task)
-                # else:
-                #           hired.append(task)
+                elif task['status'] == "teamlead_hire":
+                          teamlead_hire.append(task)
+                else:
+                          hired.append(task)
          
             total_shorlisted_candidate = len(shortlisted)
             total_selected_candidate = len(selected)
             total_teamlead_hire_candidate = len(teamlead_hire)
             total_hired_candidate = len( hired)
-            data =[total_shorlisted_candidate ,  total_selected_candidate]
-            print(data)
+        
+            data =[total_shorlisted_candidate , total_selected_candidate, total_teamlead_hire_candidate, total_hired_candidate]
+           
             return data
         Task_status = find_tasks_status(Task_detail)
-        context={"timeperiod":timeperiod ,"data":Task_status }
-        return HttpResponse(json.dumps(Task_status ), content_type="application/json")
+        print(Task_status)
+        return JsonResponse({"Task_status":  Task_status})
+        # return HttpResponse(json.dumps(Task_status ), content_type="application/json")
         # return render(request, 'hr_report.html',context={"timeperiod":timeperiod ,"data":Task_status })
     else:
-           return render(request, 'hr_report.html',context={"timeperiod":timeperiod})
+           return render(request, 'hr_report.html')
+
+
+
