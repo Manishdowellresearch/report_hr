@@ -8,9 +8,10 @@ urlpatterns =[
   path('report/',report, name= 'report'),
   path('task_report/',task_report, name= 'task_report'),
   path('timeperiod/',timeperiod, name= 'timeperiod'),
-    path('hr_report/',hr_report, name= 'hr_report'),
-    path('mainpage/',mainpage, name= 'mainpage'),
-     path('Teamlead_report/',Teamlead_report, name= 'Teamlead_report'),
-      path('Candidate_report/',Candidate_report, name= 'Candidate_report'),
-          path('account_report/',account_report, name= 'account_report'),
+  path('hr_report/',hr_report, name= 'hr_report'),
+  path('mainpage/',mainpage, name= 'mainpage'),
+  path('Teamlead_report/',Teamlead_report, name= 'Teamlead_report'),
+  path('Candidate_report/',Candidate_report, name= 'Candidate_report'),
+  path('account_report/',account_report, name= 'account_report'),
+  
 ]
