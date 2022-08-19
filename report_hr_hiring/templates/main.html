@@ -64,8 +64,7 @@
     color: #f8f9fa;
 }
 .register{
-    /* background: -webkit-linear-gradient(left, #3931af, #00c6ff); */
-    /* background: -webkit-linear-gradient(left, #3931af, #00c6ff); */
+  
     background-color: #000000;
     background-image: linear-gradient(315deg, #000000 0%, #414141 74%);
     margin-top: 3%;
@@ -106,11 +105,11 @@
                         <div class="tab-pane fade show active text-align form-new" id="home" role="tabpanel" aria-labelledby="home-tab">
                             <div class="row register-form">
                                 <div class="col-md-12">
-                            <h3 class="register-heading">Choose the Time period</h3>
+                         
                                  
                                     <form action="" method="post">
                                      
-                                        <select  class="filter-selectbox"  id="timeperiod">
+                                        <select  class="btn btn-Primary  dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="timeperiod">
                                         
                                          
                                         </select>
@@ -134,14 +133,17 @@
             <canvas id="myChart2" style="width:10%;max-width:600px"></canvas>
                 </div>
                 <div class="column">
-            <canvas id="myChart3" style="width:10%;max-width:600px"></canvas>
+            <canvas id="myChart5" style="width:10%;max-width:600px"></canvas>
                 </div>
                 <div class="column">
             <canvas id="myChart4" style="width:10%;max-width:600px"></canvas>
             </div>
             <div class="column">
-            <canvas id="myChart5" style="width:10%;max-width:600px"></canvas>
+            <canvas id="myChart3" style="width:10%;max-width:600px"></canvas>
             </div>
+            <div class="column">
+              <canvas id="myChart6" style="width:10%;max-width:600px"></canvas>
+              </div>
         </div>
     </div>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
@@ -190,7 +192,7 @@
               options: {
                 title: {
                   display: true,
-                  text: "Candidate status"
+                  text: "Hr status"
                 }
               }
             });
@@ -220,7 +222,7 @@
             options: {
               title: {
                 display: true,
-                text: "Candidate status"
+                text: "Hr status"
               }
             }
           });
@@ -249,7 +251,7 @@
           options: {
             title: {
               display: true,
-              text: "Candidate status"
+              text: "TeamLead status"
             }
           }
         });
@@ -278,7 +280,7 @@
         options: {
           title: {
             display: true,
-            text: "Candidate status"
+            text: "Account status"
           }
         }
       });
@@ -287,12 +289,11 @@
 
   function chartjs(value)
   {
- var xValues = ["shortlisted" ,"Selected" ,"Teamlead_hire" ,"Hired" ];
+ var xValues = ["shortlisted" ,"Selected"];
     var barColors = [
     "#b91d47",
     "#00aba9",
-    "#2b5797",
-    "#e8c3b9",
+  
      
     
     ];
@@ -310,10 +311,41 @@
       options: {
         title: {
           display: true,
-          text: "Candidate status"
+          text: "Hr status"
         }
       }
     });
+} 
+
+
+function chartcandidate(value)
+{
+var xValues = ["pending"];
+  var barColors = [
+  " #00b359",
+  
+
+   
+  
+  ];
+  
+  new Chart("myChart6", {
+    
+    type: "pie",
+    data: {
+      labels: xValues,
+      datasets: [{
+        backgroundColor: barColors,
+        data: value
+      }]
+    },
+    options: {
+      title: {
+        display: true,
+        text: "Candidate status"
+      }
+    }
+  });
 } 
 
 
@@ -330,7 +362,7 @@
                     var token = $('input[name=csrfmiddlewaretoken]').val();
                     $.ajax({
                         type : 'POST',
-                        url : "/hr_report/",
+                        url :'/hr_report/',
                         data:{
                             'Timeperiod' : selectedValue,
                             
@@ -343,21 +375,104 @@
                           
                           console.log(response)
                       
-                               shortlisted = [response.Task_status[0]]
-                                  selected = [response.Task_status[1]]
-                                  Teamlead_hire= [response.Task_status[2]]
-                                  Hired = [response.Task_status[3]]
-                                  chartjs(response.Task_status)
+                               shortlisted = [response.status[0]]
+                                  selected = [response.status[1]]
+                                  
+                                  chartjs(response.status)
                                   chartshortlisted(shortlisted)
                                   chartselected(selected)
-                                chartteamlead_hire(Teamlead_hire)
+                           
+                        }
+                                
+                        
+                    
+                         
+                        });
+
+                    
+                      $.ajax({
+                        type : 'POST',
+                        url : '/account_report/',
+                        data:{
+                            'Timeperiod' : selectedValue,
+                            
+                            csrfmiddlewaretoken : token
+                        },
+                       
+                        success: function(response)
+                        {  
+                          
+                          
+                          console.log(response)
+                      
+                              
+                                  Hired = [response.status]
+                                  
                                 chartHired(Hired)
                                
                         }
                                 
                         
-                
+                    
+                         
                         });
+
+
+                        $.ajax({
+                          type : 'POST',
+                          url : '/Teamlead_report/',
+                          data:{
+                              'Timeperiod' : selectedValue,
+                              
+                              csrfmiddlewaretoken : token
+                          },
+                         
+                          success: function(response)
+                          {  
+                            
+                            
+                            console.log(response)
+                        
+                              
+                                    Teamlead_hire= [response.status]
+                                   chartteamlead_hire(Teamlead_hire)
+                                 
+                                 
+                          }
+                                  
+                          
+                      
+                           
+                          });
+
+
+
+                          $.ajax({
+                            type : 'POST',
+                            url : '/Candidate_report/',
+                            data:{
+                                'Timeperiod' : selectedValue,
+                                
+                                csrfmiddlewaretoken : token
+                            },
+                           
+                            success: function(response)
+                            {  
+                              
+                              
+                              console.log(response)
+                          
+                                
+                                      candidate = [response.status]
+                                      chartcandidate( candidate )
+                                   
+                                   
+                            }
+                                    
+                            
+                        
+                             
+                            });
                 });
             });
         
