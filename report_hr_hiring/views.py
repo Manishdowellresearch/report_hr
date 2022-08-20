@@ -7,10 +7,10 @@ import json
 # Create your views here.
 @csrf_exempt
 def home(request):
-    response = targeted_population('hr_hiring','candidate_view',  ['candidate_data'], 'life_time')
+    response = targeted_population('hr_hiring','accounts_view',  ['application_details'], 'life_time')
     candidate=[]
     for i in response['normal']['data'][0]:
-        candidate.append(i['candidate_data']['applicant'])
+        candidate.append(i['application_details']['applicant'])
     print(candidate)
     return render(request,'home.html',context={"candidate":candidate})
 
