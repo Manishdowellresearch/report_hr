@@ -4,6 +4,8 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
 from .dowellpopulationfunction import targeted_population
 import json
+import requests
+from datetime import datetime
 # Create your views here.
 @csrf_exempt
 def home(request):
@@ -11,7 +13,6 @@ def home(request):
     candidate=[]
     for i in response['normal']['data'][0]:
         candidate.append(i['application_details']['applicant'])
-    print(candidate)
     return render(request,'home.html',context={"candidate":candidate})
 
 
@@ -112,9 +113,6 @@ def hr_report(request):
         return JsonResponse({"status":  status})
       
 
-
-
-
 @csrf_exempt
 def Teamlead_report(request):
     if request.method == 'POST':
@@ -197,4 +195,84 @@ def account_report(request):
         status = find__status(account_detail)
         print(status)
         return JsonResponse({"status":   status })
-       
+
+@csrf_exempt
+def update_id(request):
+    response = targeted_population('hr_hiring','tasks',  ['task_details'], 'life_time')
+    candidate_ids=[]
+    for i in response['normal']['data'][0]:
+        candidate_ids.append(i['_id'])
+    return JsonResponse({"id":candidate_ids})
+
+@csrf_exempt
+def update_task(request):
+    response = targeted_population('hr_hiring','tasks',  ['task_details'], 'life_time')
+    return JsonResponse({"task":response})
+
+
+
+def get_event_id(request):
+    global event_id
+    dd=datetime.now()
+    time=dd.strftime("%d:%m:%Y,%H:%M:%S")
+    url="https://100003.pythonanywhere.com/event_creation"
+
+    data={
+        "platformcode":"FB" ,
+        "citycode":"101",
+        "daycode":"0",
+        "dbcode":"pfm" ,
+        "ip_address":"192.168.0.41",
+        "login_id":"lav",
+        "session_id":"new",
+        "processcode":"1",
+        "regional_time":time,
+        "dowell_time":time,
+        "location":"22446576",
+        "objectcode":"1",
+        "instancecode":"100051",
+        "context":"afdafa ",
+        "document_id":"3004",
+        "rules":"some rules",
+        "status":"work",
+        "data_type": "learn",
+        "purpose_of_usage": "add",
+        "colour":"color value",
+        "hashtags":"hash tag alue",
+        "mentions":"mentions value",
+        "emojis":"emojis",
+
+    }
+
+
+    r=requests.post(url,json=data)
+    return JsonResponse({"eventid":r.text}) 
+
+@csrf_exempt
+def Candidate_reports(request):
+    Time_period = 'life_time'
+    response = targeted_population('hr_hiring','candidate_view',  ['candidate_data'], Time_period)
+    return JsonResponse({"candidate": response})
+    if response['normal']['is_error'] == True :
+        return render(request, 'main.html',context={"timeperiod":timeperiod})
+    else:
+        candidate_detail = [data['candidate_data'] for data in response['normal']['data'][0]]
+    def find__status(candidate_detail):
+    
+        Pending = []
+        for candidate in candidate_detail:
+            
+            if candidate ['status'] == "Pending":
+                    Pending.append(candidate )
+            
+    
+        total_pending_candidate = len(Pending) 
+        data =[ total_pending_candidate]
+    
+        return data
+    candidate_status = find__status(candidate_detail)
+    return JsonResponse({"status":   candidate_status })
+
+def connection(request):
+    response = targeted_population('hr_hiring','tasks',  ['task_details'], 'life_time')
+    return JsonResponse({"candidate": response})
